@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import Songitem from "./songitem";
+import Footer from "./botones";
+import Header from "./header";
 
 const fixedsongs = [
 	{ "id": 0, "name": "Mario's Castle", "src": "https://assets.breatheco.de/apis/sound/files/mario/songs/castle.mp3" },
@@ -38,6 +40,7 @@ const Audioplayer = () => {
 		}
 		setSongRef({ id: fixedsongs[nextid].id, src: fixedsongs[nextid].src });
 		setCurrent(fixedsongs[nextid].name);
+		!playing && setPlaying(!playing);
 	}
 
 	let prevsong = (id) => {
@@ -50,18 +53,25 @@ const Audioplayer = () => {
 		}
 		setSongRef({ id: fixedsongs[previd].id, src: fixedsongs[previd].src });
 		setCurrent(fixedsongs[previd].name);
+		!playing && setPlaying(!playing);
 	}
 
 	let shuffle = () => {
 		let rndindex = Math.floor(Math.random() * fixedsongs.length);
-		setSongRef({ id: fixedsongs[rndindex].id, src: fixedsongs[rndindex].src})
+		setSongRef({ id: fixedsongs[rndindex].id, src: fixedsongs[rndindex].src })
 		setCurrent(fixedsongs[rndindex].name);
+		!playing && setPlaying(!playing);
 	}
 
 	let music = document.querySelector(".music");
+
 	let playorpause = () => {
+		if(current !== null){
 		music.paused ? music.play() : music.pause();
 		setPlaying(!playing);
+		}else{
+			window.alert('Pick a song first!')
+		}
 	}
 
 	let volumeup = () => {
@@ -77,11 +87,11 @@ const Audioplayer = () => {
 	}
 
 	return (
-		
+
 		<div className="container w-50">
-			{ playing !== false && 
-				<h1 className="mt-3 text-center">{current}</h1> 
-				}
+			<Header current={current} playing={playing} />
+
+			{/* SONGS LISTING */}
 			<ol className="mt-5 list-group list-group-flush">
 				{songs.length > 0 &&
 					songs.map((song, i) => (
@@ -91,38 +101,10 @@ const Audioplayer = () => {
 					))
 				}
 			</ol>
+
+			{/* AUDIO TAG */}
 			<audio ref={songRef} className="music" autoPlay></audio>
-			<div className="d-flex col-md-12 py-1 bg-dark text-light text-center sticky-bottom">
-				<div className="btn-group m-auto" role="group" aria-label="Basic example">
-					<button onClick={() => prevsong(songRef.current.id)} type="button" className="btn btn-secondary btn-sm">
-						<i className="mx-2 fa-solid fa-backward-step"></i>
-					</button>
-					<button onClick={() => playorpause()} type="button" className="btn btn-secondary btn-sm">
-						{playing === false ?
-							<i className="mx-2 fa-solid fa-play"></i> :
-							<i className="fa-solid fa-pause"></i>
-						}
-					</button>
-					<button onClick={() => nextsong(songRef.current.id)} type="button" className="btn btn-secondary btn-sm">
-						<i className="mx-2 fa-solid fa-forward-step"></i>
-					</button>
-					<button onClick={() => loop()} type="button" className="btn btn-sm btn-secondary">
-						<i className="fa-solid fa-repeat"></i>
-					</button>
-					<button onClick={() => shuffle()} type="button" className="btn btn-secondary btn-sm">
-						<i className="fa-solid fa-shuffle"></i>
-					</button>
-				</div>
-				<div className="btn-group m-auto" role="group" aria-label="Basic example">
-					<button onClick={() => volumedown()} type="button" className="btn btn-secondary btn-sm">
-						<i className="fa-solid fa-minus"></i>
-					</button>
-					<button className="btn btn-secondary btn-sm disabled">Volume</button>
-					<button onClick={() => volumeup()} type="button" className="btn btn-secondary btn-sm">
-						<i className="fa-solid fa-plus"></i>
-					</button>
-				</div>
-			</div>
+			<Footer playing={playing} songRef={songRef} nextsong={nextsong} prevsong={prevsong} shuffle={shuffle} playorpause={playorpause} volumeup={volumeup} volumedown={volumedown} loop={loop} />
 		</div>
 
 
