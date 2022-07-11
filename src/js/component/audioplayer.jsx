@@ -121,7 +121,7 @@ const Audioplayer = () => {
 			</ol>
 
 			{/* AUDIO TAG */}
-			<audio ref={songRef} className="music" autoPlay></audio>
+			<audio ref={songRef} className="music" onEnded={() => nextsong(songRef.current.id)} autoPlay></audio>
 			<Footer playing={playing} songRef={songRef} nextsong={nextsong} prevsong={prevsong} shuffle={shuffle} playorpause={playorpause} volumeup={volumeup} volumedown={volumedown} loop={loop} />
 		</div>
 
