@@ -101,13 +101,6 @@ const Audioplayer = () => {
 		!songRef.current.loop ? songRef.current.loop = true : songRef.current.loop = false;
 	}
 
-	let sliderstart = () => {
-		setTotaltime(songRef.current.duration);
-		var timeinterval = window.setInterval(() => {
-			setElapsedtime(songRef.current.currentTime);			
-		}, 100)
-	}
-
 	return (
 
 		<div className="container w-50">
@@ -128,7 +121,7 @@ const Audioplayer = () => {
 			</ol>
 
 			{/* AUDIO TAG */}
-			<audio ref={songRef} className="music" onEnded={() => nextsong(songRef.current.id)} onLoadedMetadata={() => sliderstart()} autoPlay></audio>
+			<audio ref={songRef} className="music" onEnded={() => nextsong(songRef.current.id)} onLoadedMetadata={() => setTotaltime(songRef.current.duration)} onTimeUpdate={() => setElapsedtime(songRef.current.currentTime)} autoPlay></audio>
 			<Footer playing={playing} songRef={songRef} nextsong={nextsong} prevsong={prevsong} shuffle={shuffle} playorpause={playorpause} volumeup={volumeup} volumedown={volumedown} loop={loop} />
 		</div>
 
