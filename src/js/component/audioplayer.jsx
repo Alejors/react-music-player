@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import Songitem from "./songitem";
-import Footer from "./botones";
+import Footer from "./footer";
 import Header from "./header";
+import Slider from "./slider";
 
 // const fixedsongs = [
 // 	{ "id": 0, "name": "Mario's Castle", "src": "https://assets.breatheco.de/apis/sound/files/mario/songs/castle.mp3" },
@@ -21,6 +22,8 @@ const Audioplayer = () => {
 	const [songs, setSongs] = useState(null);
 	const [playing, setPlaying] = useState(false);
 	const [current, setCurrent] = useState(null);
+	const [totaltime, setTotaltime] = useState(null);
+	const [elapsedtime, setElapsedtime] = useState(null);
 	let songRef = useRef(null);
 
 	const setSongRef = ({ id, src }) => {
@@ -28,18 +31,15 @@ const Audioplayer = () => {
 		songRef.current.id = id;
 	}
 
+	//CAPTURA DE DATOS
 	useEffect(() => {
-		consult('http://assets.breatheco.de/apis/sound/songs');
-
-	}, [])
-
-	//FUNCION DE CAPTURA DE DATOS
-	const consult = (url) => {
-		fetch(url)
+		fetch('http://assets.breatheco.de/apis/sound/songs')
 			.then(response => { return response.json() })
 			.then(data => { setSongs(data) })
 			.catch(error => console.log(error))
-	}
+	}, [])
+
+	let position = Math.floor(elapsedtime/totaltime*100);
 
 	//CONTROLES
 
@@ -80,11 +80,9 @@ const Audioplayer = () => {
 		!playing && setPlaying(!playing);
 	}
 
-	let music = document.querySelector(".music");
-
 	let playorpause = () => {
 		if (current !== null) {
-			music.paused ? music.play() : music.pause();
+			songRef.current.paused ? songRef.current.play() : songRef.current.pause();
 			setPlaying(!playing);
 		} else {
 			window.alert('Pick a song first!')
@@ -92,24 +90,33 @@ const Audioplayer = () => {
 	}
 
 	let volumeup = () => {
-		music.volume += 0.1;
+		songRef.current.volume += 0.1;
 	}
 
 	let volumedown = () => {
-		music.volume -= 0.1;
+		songRef.current.volume -= 0.1;
 	}
 
 	let loop = () => {
-		!music.loop ? music.loop = true : music.loop = false;
+		!songRef.current.loop ? songRef.current.loop = true : songRef.current.loop = false;
+	}
+
+	let sliderstart = () => {
+		setTotaltime(songRef.current.duration);
+		var timeinterval = window.setInterval(() => {
+			setElapsedtime(songRef.current.currentTime);			
+		}, 100)
 	}
 
 	return (
 
 		<div className="container w-50">
-			<Header current={current} playing={playing} />
-
+			<div className="sticky-top">
+				<Header current={current} playing={playing} />
+				<Slider position={position} playing={playing} />
+			</div>
 			{/* SONGS LISTING */}
-			<ol className="mt-5 list-group list-group-flush">
+			<ol className="mt-3 list-group list-group-flush">
 				{!!songs &&
 					songs.length > 0 &&
 					songs.map((song, i) => (
@@ -121,7 +128,7 @@ const Audioplayer = () => {
 			</ol>
 
 			{/* AUDIO TAG */}
-			<audio ref={songRef} className="music" onEnded={() => nextsong(songRef.current.id)} autoPlay></audio>
+			<audio ref={songRef} className="music" onEnded={() => nextsong(songRef.current.id)} onLoadedMetadata={() => sliderstart()} autoPlay></audio>
 			<Footer playing={playing} songRef={songRef} nextsong={nextsong} prevsong={prevsong} shuffle={shuffle} playorpause={playorpause} volumeup={volumeup} volumedown={volumedown} loop={loop} />
 		</div>
 

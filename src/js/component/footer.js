@@ -3,6 +3,7 @@ import React from "react";
 const Footer = props => {
     return (
         <div className="d-flex col-md-12 py-1 bg-dark text-light text-center sticky-bottom">
+            
             <div className="btn-group m-auto" role="group" aria-label="Basic example">
                 <button onClick={() => props.prevsong(props.songRef.current.id)} type="button" className="btn btn-secondary btn-sm">
                     <i className="mx-2 fa-solid fa-backward-step"></i>
