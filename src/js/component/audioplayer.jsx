@@ -33,7 +33,7 @@ const Audioplayer = () => {
 
 	//CAPTURA DE DATOS
 	useEffect(() => {
-		fetch('http://assets.breatheco.de/apis/sound/songs')
+		fetch('https://assets.breatheco.de/apis/sound/songs')
 			.then(response => { return response.json() })
 			.then(data => { setSongs(data) })
 			.catch(error => console.log(error))
